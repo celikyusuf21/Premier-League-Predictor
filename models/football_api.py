@@ -1,54 +1,24 @@
 import requests
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
-
-API_KEY = os.getenv("FOOTBALL_API_KEY")
-
-URL = "https://v3.football.api-sports.io/fixtures"
-
 
 def get_today_matches():
+    url = "https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php"
+    
+    params = {
+        "id": "4328"  # Premier League ID
+    }
 
-    if not API_KEY:
-        print("Football API Key not found")
-        return []
+    r = requests.get(url, params=params, timeout=10)
+    data = r.json()
 
-    try:
+    matches = []
 
-        headers = {
-            "x-apisports-key": API_KEY
-        }
+    for event in data.get("events", [])[:10]:
+        if str(event.get("idLeague")) != "4328":
+            continue
+        matches.append({
+            "home": event["strHomeTeam"],
+            "away": event["strAwayTeam"],
+            "status": "NS"
+        })
 
-        params = {
-            "league": 39,
-            "season": 2025,
-            "status": "NS",
-            "timezone": "Europe/London"
-        }
-
-        res = requests.get(
-            URL,
-            headers=headers,
-            params=params,
-            timeout=10
-        )
-
-        data = res.json()
-
-        matches = []
-
-        for m in data.get("response", []):
-
-            matches.append({
-                "home": m["teams"]["home"]["name"],
-                "away": m["teams"]["away"]["name"]
-            })
-
-        return matches
-
-    except Exception as e:
-
-        print("Football API error:", e)
-        return []
+    return matches

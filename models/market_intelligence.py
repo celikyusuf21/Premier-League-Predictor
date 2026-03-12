@@ -1,6 +1,6 @@
 import requests
-
-API_KEY = "dddec5da64ded80fb8a954dc87d4b45e"
+import os
+API_KEY = os.getenv("ODDS_API_KEY")
 
 
 def get_epl_odds():

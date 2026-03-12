@@ -1,6 +1,6 @@
 import stripe
-
-stripe.api_key = "YOUR_STRIPE_SECRET"
+import os
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 def create_checkout():
 

@@ -14,7 +14,7 @@ from models.football_api import get_today_matches
 load_dotenv()
 
 TOKEN = os.getenv("TELEGRAM_TOKEN")
-API_KEY = os.getenv("API_FOOTBALL_KEY")
+API_KEY = os.getenv("FOOTBALL_API_KEY")
 API_URL = "http://127.0.0.1:5001"
 
 CHANNEL_ID = -1003718264705

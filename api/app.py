@@ -1,14 +1,15 @@
 import sys
 import os
 
+# Path fix ⭐ (models/ klasöründen import yapmadan önce olmalı)
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from flask_cors import CORS
 from flask import request, Flask, jsonify
 import joblib
 import numpy as np
-
-# Path fix ⭐
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
+#from models.football_api import get_today_matches
+from models.sportsdb_api import get_today_matches
 from models.database import db, User
 from payment import create_checkout
 
@@ -101,32 +102,11 @@ def predict():
 
 @app.route("/live")
 def live_matches():
-
-    teams = [
-        "Arsenal","Aston Villa","Bournemouth","Brentford","Brighton",
-        "Chelsea","Crystal Palace","Everton","Fulham","Liverpool",
-        "Man City","Man United","Newcastle","Nottingham Forest",
-        "Tottenham","West Ham","Wolves","Burnley","Luton","Sheffield United"
-    ]
-
-    matches = []
-
-    for i in range(3):
-
-        home = np.random.choice(teams)
-        away = np.random.choice(teams)
-
-        while away == home:
-            away = np.random.choice(teams)
-
-        matches.append({
-            "home": home,
-            "away": away,
-            "status": "LIVE",
-            "minute": int(np.random.randint(1,90))
-        })
-
-    return jsonify({"matches": matches})
+    try:
+        matches = get_today_matches()
+        return jsonify({"matches": matches})
+    except Exception as e:
+        return jsonify({"matches": [], "error": str(e)}), 500
 
 
 # -------------------------
